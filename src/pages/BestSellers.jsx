@@ -3,35 +3,38 @@ import { getProducts } from '../services/api';
 import { priceINR } from '../utils/currency';
 import './BestSellers.css';
 
-// Curated best seller data with purchase counts and featured reviews
+// Curated best seller data with purchase counts, featured reviews and direct images
 const BEST_SELLER_DATA = [
   {
-    name: 'Birkin 30',
-    brand: 'Hermès',
+    name:      'Birkin 30',
+    brand:     'Hermès',
+    image:     'https://images.unsplash.com/photo-1591561954557-26941169b49e?w=600&q=80',
     purchases: 2847,
-    badge: '🏆 #1 Best Seller',
+    badge:     '🏆 #1 Best Seller',
     reviews: [
-      { author: 'Priya S.', city: 'Mumbai',    rating: 5, text: 'Absolutely stunning. The craftsmanship is unmatched. LUXE delivered it perfectly authenticated with certificate.' },
-      { author: 'Ananya K.', city: 'Delhi',    rating: 5, text: 'My dream bag finally arrived. Worth every rupee. The authentication process gave me complete confidence.' },
-      { author: 'Sneha R.', city: 'Bangalore', rating: 5, text: 'Flawless condition, original packaging, certificate included. LUXE is the only place I trust for luxury.' },
+      { author: 'Priya S.',   city: 'Mumbai',    rating: 5, text: 'Absolutely stunning. The craftsmanship is unmatched. LUXE delivered it perfectly authenticated with certificate.' },
+      { author: 'Ananya K.',  city: 'Delhi',     rating: 5, text: 'My dream bag finally arrived. Worth every rupee. The authentication process gave me complete confidence.' },
+      { author: 'Sneha R.',   city: 'Bangalore', rating: 5, text: 'Flawless condition, original packaging, certificate included. LUXE is the only place I trust for luxury.' },
     ],
   },
   {
-    name: 'Rolex Submariner Date',
-    brand: 'Rolex',
+    name:      'Submariner Date',
+    brand:     'Rolex',
+    image:     'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=600&q=80',
     purchases: 2341,
-    badge: '🥈 #2 Best Seller',
+    badge:     '🥈 #2 Best Seller',
     reviews: [
-      { author: 'Arjun M.',  city: 'Delhi',     rating: 5, text: 'Received with original box and papers. The watch is in perfect condition. Highly recommend LUXE.' },
-      { author: 'Vikram P.', city: 'Chennai',   rating: 5, text: 'Verified authentic, exactly as described. The Submariner is a timeless piece. Very happy with my purchase.' },
-      { author: 'Rohan T.',  city: 'Pune',      rating: 4, text: 'Great experience overall. Fast shipping, well packaged, and the watch is stunning.' },
+      { author: 'Arjun M.',   city: 'Delhi',   rating: 5, text: 'Received with original box and papers. The watch is in perfect condition. Highly recommend LUXE.' },
+      { author: 'Vikram P.',  city: 'Chennai', rating: 5, text: 'Verified authentic, exactly as described. The Submariner is a timeless piece. Very happy with my purchase.' },
+      { author: 'Rohan T.',   city: 'Pune',    rating: 4, text: 'Great experience overall. Fast shipping, well packaged, and the watch is stunning.' },
     ],
   },
   {
-    name: 'Chanel Classic Flap Bag',
-    brand: 'Chanel',
+    name:      'Classic Flap Bag',
+    brand:     'Chanel',
+    image:     'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&q=80',
     purchases: 1986,
-    badge: '🥉 #3 Best Seller',
+    badge:     '🥉 #3 Best Seller',
     reviews: [
       { author: 'Meera L.',  city: 'Kolkata',   rating: 5, text: 'The Classic Flap is iconic and LUXE delivered it in pristine condition. Authentication certificate is a great touch.' },
       { author: 'Divya N.',  city: 'Jaipur',    rating: 5, text: 'Bought as a gift for my mother. She was overjoyed. Genuine Chanel, no doubts whatsoever.' },
@@ -39,10 +42,11 @@ const BEST_SELLER_DATA = [
     ],
   },
   {
-    name: 'Dyson Airwrap Complete',
-    brand: 'Dyson',
+    name:      'Dyson Airwrap Complete',
+    brand:     'Dyson',
+    image:     'https://images.unsplash.com/photo-1522338242992-e1a54906a8da?w=600&q=80',
     purchases: 1754,
-    badge: '🔥 Trending',
+    badge:     '🔥 Trending',
     reviews: [
       { author: 'Rahul G.',  city: 'Surat',     rating: 5, text: 'Got the Airwrap sealed with original warranty. Works perfectly. LUXE is trustworthy for electronics too.' },
       { author: 'Pooja M.',  city: 'Mumbai',    rating: 5, text: 'Genuine product, original box, warranty card included. My hair has never looked better!' },
@@ -50,10 +54,11 @@ const BEST_SELLER_DATA = [
     ],
   },
   {
-    name: 'Daytona Chronograph',
-    brand: 'Rolex',
+    name:      'Daytona Chronograph',
+    brand:     'Rolex',
+    image:     'https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=600&q=80',
     purchases: 1523,
-    badge: '⭐ Top Rated',
+    badge:     '⭐ Top Rated',
     reviews: [
       { author: 'Karan D.',  city: 'Ahmedabad', rating: 5, text: 'The Daytona is a masterpiece. Came with full papers and box. LUXE authentication gave me peace of mind.' },
       { author: 'Aditya R.', city: 'Mumbai',    rating: 5, text: 'Investment piece. Verified authentic, stunning condition. Will definitely buy from LUXE again.' },
@@ -61,14 +66,15 @@ const BEST_SELLER_DATA = [
     ],
   },
   {
-    name: 'Hermès Kelly 28',
-    brand: 'Hermès',
+    name:      'Kelly 28',
+    brand:     'Hermès',
+    image:     'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&q=80',
     purchases: 1398,
-    badge: '💎 Luxury Pick',
+    badge:     '💎 Luxury Pick',
     reviews: [
-      { author: 'Nisha T.',  city: 'Delhi',     rating: 5, text: 'The Kelly is everything I dreamed of. LUXE delivered it with full authentication. Absolutely worth it.' },
-      { author: 'Preethi V.',city: 'Chennai',   rating: 5, text: 'Stunning bag in perfect condition. The palladium hardware is flawless. LUXE is the best.' },
-      { author: 'Lakshmi R.',city: 'Hyderabad', rating: 5, text: 'Bought for my anniversary. My wife was speechless. Genuine Hermès, certified by LUXE.' },
+      { author: 'Nisha T.',   city: 'Delhi',     rating: 5, text: 'The Kelly is everything I dreamed of. LUXE delivered it with full authentication. Absolutely worth it.' },
+      { author: 'Preethi V.', city: 'Chennai',   rating: 5, text: 'Stunning bag in perfect condition. The palladium hardware is flawless. LUXE is the best.' },
+      { author: 'Lakshmi R.', city: 'Hyderabad', rating: 5, text: 'Bought for my anniversary. My wife was speechless. Genuine Hermès, certified by LUXE.' },
     ],
   },
 ];
@@ -91,15 +97,13 @@ function BestSellerCard({ data, product, onNavigate, onAddToCart, onToggleWishli
       <div className="bs-badge">{data.badge}</div>
 
       <div className="bs-card-inner">
-        {/* Product Image */}
+        {/* Product Image — always use data.image, fallback to product.image from DB */}
         <div className="bs-img-wrap" onClick={() => product && onNavigate('product', { productId: product._id })}>
-          {product ? (
-            <img src={product.image} alt={product.name} />
-          ) : (
-            <div className="bs-img-placeholder">
-              <span>{data.brand.charAt(0)}</span>
-            </div>
-          )}
+          <img
+            src={data.image || (product && product.image)}
+            alt={data.name}
+            onError={e => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&q=80'; }}
+          />
           <div className="bs-purchases">
             <span>🛍️</span> {data.purchases.toLocaleString('en-IN')} purchases
           </div>
@@ -197,8 +201,8 @@ export default function BestSellers({ onNavigate, onAddToCart, onToggleWishlist,
   ];
 
   const CATEGORY_MAP = {
-    Handbags:    ['Birkin 30', 'Chanel Classic Flap Bag', 'Hermès Kelly 28'],
-    Watches:     ['Rolex Submariner Date', 'Daytona Chronograph'],
+    Handbags:    ['Birkin 30', 'Classic Flap Bag', 'Kelly 28'],
+    Watches:     ['Submariner Date', 'Daytona Chronograph'],
     Electronics: ['Dyson Airwrap Complete'],
   };
 
