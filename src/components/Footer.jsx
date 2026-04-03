@@ -12,7 +12,7 @@ export default function Footer({ onNavigate }) {
         <div className="footer-links">
           <h4>Shop</h4>
           <ul>
-            {[['Handbags','products',{category:'Handbags'}],['Watches','products',{category:'Watches'}],['Jewellery','products',{category:'Jewellery'}],['Shoes','products',{category:'Shoes'}]].map(([label, pg, props]) => (
+            {[['Collections','products',{}],['Best Sellers','best-sellers',{}],['Handbags','products',{category:'Handbags'}],['Watches','products',{category:'Watches'}],['Jewellery','products',{category:'Jewellery'}],['Shoes','products',{category:'Shoes'}]].map(([label, pg, props]) => (
               <li key={label} onClick={() => onNavigate(pg, props)}>{label}</li>
             ))}
           </ul>

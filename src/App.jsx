@@ -15,7 +15,7 @@ import HelpCenter from './pages/HelpCenter';
 import Trust from './pages/Trust';
 import AdminDashboard from './pages/AdminDashboard';
 import BrandRegister from './pages/BrandRegister';
-import LiveActivityFeed from './components/LiveActivityFeed';
+import BestSellers from './pages/BestSellers';
 import Toast from './components/Toast';
 import './index.css';
 
@@ -99,6 +99,7 @@ function AppInner() {
       case 'orders':   return <Orders onNavigate={navigate} />;
       case 'help':           return <HelpCenter onNavigate={navigate} />;
       case 'trust':           return <Trust onNavigate={navigate} />;
+      case 'best-sellers':    return <BestSellers onNavigate={navigate} onAddToCart={addToCart} onToggleWishlist={toggleWishlist} isInWishlist={isInWishlist} />;
       case 'admin':           return <AdminDashboard onNavigate={navigate} />;
       case 'brand-register':  return <BrandRegister onNavigate={navigate} />;
       case 'home':
@@ -113,7 +114,6 @@ function AppInner() {
       {page !== 'admin' && <Navbar cartCount={cartCount} wishlistCount={wishlist.length} onNavigate={navigate} />}
       {renderPage()}
       {!hideFooter && <Footer onNavigate={navigate} />}
-      {page !== 'admin' && <LiveActivityFeed />}
       <Toast toasts={toasts} onRemove={removeToast} />
     </>
   );
