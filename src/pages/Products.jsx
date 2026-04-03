@@ -234,9 +234,13 @@ export default function Products({ onNavigate, onAddToCart, onToggleWishlist, is
               </div>
             ) : fetchError ? (
               <div className="empty-state">
-                <p style={{ color: '#e05555' }}>⚠ Could not load products: {fetchError}</p>
-                <p style={{ fontSize: '12px', marginTop: '8px' }}>Make sure the backend is running at the correct URL.</p>
-                <button className="btn btn-outline" onClick={fetchProducts} style={{ marginTop: '16px' }}>Retry</button>
+                <p style={{ color: '#e05555', fontSize: '15px' }}>⚠️ Products could not be loaded</p>
+                <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '8px', lineHeight: '1.8' }}>
+                  {fetchError.includes('Cannot connect')
+                    ? 'Backend server is not running. Start it with: cd Backend && node server.js'
+                    : fetchError}
+                </p>
+                <button className="btn btn-gold" onClick={fetchProducts} style={{ marginTop: '20px' }}>Retry</button>
               </div>
             ) : products.length > 0 ? (
               <div className="products-grid-page">
