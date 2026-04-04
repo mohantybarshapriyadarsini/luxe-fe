@@ -1,32 +1,38 @@
 import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getProductById, addReview } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { priceINR } from '../utils/currency';
 import TrustBadges from '../components/TrustBadges';
 import './ProductDetail.css';
 
-export default function ProductDetail({ productId, onNavigate, onAddToCart, onToggleWishlist, isInWishlist }) {
+export default function ProductDetail({ onAddToCart, onToggleWishlist, isInWishlist }) {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [reviewForm, setReviewForm] = useState({ rating: 5, comment: '' });
   const [reviewMsg, setReviewMsg]   = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [imgError, setImgError] = useState(false);
+
+  const fallbackImage = 'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=600&q=80';
 
   useEffect(() => {
-    if (!productId) { setLoading(false); return; }
-    getProductById(productId).then(setProduct).catch(() => setProduct(null)).finally(() => setLoading(false));
-  }, [productId]);
+    if (!id) { setLoading(false); return; }
+    getProductById(id).then(setProduct).catch(() => setProduct(null)).finally(() => setLoading(false));
+  }, [id]);
 
   async function handleReviewSubmit(e) {
     e.preventDefault();
     if (!reviewForm.comment.trim()) return;
     setSubmitting(true);
     try {
-      await addReview(productId, reviewForm);
+      await addReview(id, reviewForm);
       setReviewMsg('Review submitted!');
       setReviewForm({ rating: 5, comment: '' });
-      const updated = await getProductById(productId);
+      const updated = await getProductById(id);
       setProduct(updated);
     } catch (err) {
       setReviewMsg(err.message);
@@ -41,7 +47,7 @@ export default function ProductDetail({ productId, onNavigate, onAddToCart, onTo
     <main className="detail-page">
       <div className="container">
         <p>Product not found.</p>
-        <button className="btn btn-outline" onClick={() => onNavigate('products')}>Back to Collections</button>
+        <button className="btn btn-outline" onClick={() => navigate('/products')}>Back to Collections</button>
       </div>
     </main>
   );
@@ -52,16 +58,20 @@ export default function ProductDetail({ productId, onNavigate, onAddToCart, onTo
     <main className="detail-page">
       <div className="container">
         <nav className="breadcrumb">
-          <button onClick={() => onNavigate('home')}>Home</button>
+          <button onClick={() => navigate('/')}>Home</button>
           <span>/</span>
-          <button onClick={() => onNavigate('products')}>Collections</button>
+          <button onClick={() => navigate('/products')}>Collections</button>
           <span>/</span>
           <span>{product.name}</span>
         </nav>
 
         <div className="detail-grid">
           <div className="detail-img">
-            <img src={product.image} alt={product.name} />
+            <img 
+              src={imgError ? fallbackImage : (product.image || fallbackImage)} 
+              alt={product.name}
+              onError={() => setImgError(true)}
+            />
             <div className="detail-auth-badge"><span>✦</span><span>Certified Authentic</span></div>
           </div>
 
@@ -138,7 +148,7 @@ export default function ProductDetail({ productId, onNavigate, onAddToCart, onTo
             </form>
           ) : (
             <p className="login-to-review">
-              <button className="auth-link" onClick={() => onNavigate('login')}>Sign in</button> to write a review.
+              <button className="auth-link" onClick={() => navigate('/login')}>Sign in</button> to write a review.
             </p>
           )}
         </div>

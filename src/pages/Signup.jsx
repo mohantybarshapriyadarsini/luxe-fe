@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './AuthPages.css';
 
@@ -13,7 +14,8 @@ const INDIAN_STATES = [
   'Uttarakhand','West Bengal','Delhi','Jammu & Kashmir','Ladakh',
 ];
 
-export default function Signup({ onNavigate }) {
+export default function Signup() {
+  const navigate = useNavigate();
   const { signup } = useAuth();
   const [step,    setStep]    = useState(1); // 1 = basic, 2 = personal details
   const [form,    setForm]    = useState({
@@ -68,7 +70,7 @@ export default function Signup({ onNavigate }) {
     });
     setLoading(false);
     if (!result.ok) { setError(result.error); return; }
-    onNavigate('home');
+    navigate('/');
   }
 
   return (
@@ -173,7 +175,7 @@ export default function Signup({ onNavigate }) {
         )}
 
         <div className="auth-footer">
-          <p>Already have an account?{' '}<button className="auth-link" onClick={() => onNavigate('login')}>Sign in</button></p>
+          <p>Already have an account?{' '}<button className="auth-link" onClick={() => navigate('/login')}>Sign in</button></p>
         </div>
       </div>
     </div>

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import './Navbar.css';
 
-export default function Navbar({ cartCount, wishlistCount, onNavigate }) {
+export default function Navbar({ cartCount, wishlistCount, navigate }) {
   const { user, logout } = useAuth();
   const [menuOpen,    setMenuOpen]    = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -23,27 +23,27 @@ export default function Navbar({ cartCount, wishlistCount, onNavigate }) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  function handleLogout() { logout(); setProfileOpen(false); onNavigate('home'); }
+  function handleLogout() { logout(); setProfileOpen(false); navigate('/'); }
 
   return (
     <header className={`navbar ${scrolled ? 'scrolled' : ''}`}>
       <div className="container navbar-inner">
 
-        <button className="nav-logo" onClick={() => onNavigate('home')}>LUXE</button>
+        <button className="nav-logo" onClick={() => navigate('/')}>LUXE</button>
 
         <nav className={`nav-links ${menuOpen ? 'open' : ''}`}>
-          {[['home','Home'],['products','Collections'],['best-sellers','Best Sellers'],['trust','Why Trust Us'],['help','Help Center']].map(([pg, label]) => (
-            <button key={pg} className="nav-link" onClick={() => { onNavigate(pg); setMenuOpen(false); }}>
+          {[['/','Home'],['/products','Collections'],['/best-sellers','Best Sellers'],['/trust','Why Trust Us'],['/help','Help Center']].map(([pg, label]) => (
+            <button key={pg} className="nav-link" onClick={() => { navigate(pg); setMenuOpen(false); }}>
               {label}<span className="nav-underline" />
             </button>
           ))}
         </nav>
 
         <div className="nav-actions">
-          <button className="nav-cta" onClick={() => onNavigate('products')}>Shop Now</button>
+          <button className="nav-cta" onClick={() => navigate('/products')}>Shop Now</button>
 
           {/* Wishlist */}
-          <button className="icon-btn" onClick={() => onNavigate('wishlist')} aria-label="Wishlist">
+          <button className="icon-btn" onClick={() => navigate('/wishlist')} aria-label="Wishlist">
             <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
             </svg>
@@ -51,7 +51,7 @@ export default function Navbar({ cartCount, wishlistCount, onNavigate }) {
           </button>
 
           {/* Cart */}
-          <button className="icon-btn" onClick={() => onNavigate('cart')} aria-label="Cart">
+          <button className="icon-btn" onClick={() => navigate('/cart')} aria-label="Cart">
             <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
               <line x1="3" y1="6" x2="21" y2="6"/>
@@ -75,8 +75,8 @@ export default function Navbar({ cartCount, wishlistCount, onNavigate }) {
                     </div>
                   </div>
                   <div className="pd-actions">
-                    {[['profile','My Profile'],['orders','My Orders'],['wishlist','Wishlist'],['help','Help Center']].map(([pg, label]) => (
-                      <button key={pg} className="pd-action-btn" onClick={() => { onNavigate(pg); setProfileOpen(false); }}>{label}</button>
+                    {[['/profile','My Profile'],['/orders','My Orders'],['/wishlist','Wishlist'],['/help','Help Center']].map(([pg, label]) => (
+                      <button key={pg} className="pd-action-btn" onClick={() => { navigate(pg); setProfileOpen(false); }}>{label}</button>
                     ))}
                     <button className="pd-logout-btn" onClick={handleLogout}>Sign Out</button>
                   </div>
@@ -84,7 +84,7 @@ export default function Navbar({ cartCount, wishlistCount, onNavigate }) {
               )}
             </div>
           ) : (
-            <button className="nav-signin-btn" onClick={() => onNavigate('login')}>Sign In</button>
+            <button className="nav-signin-btn" onClick={() => navigate('/login')}>Sign In</button>
           )}
 
           <button className={`hamburger ${menuOpen ? 'open' : ''}`} onClick={() => setMenuOpen(v => !v)} aria-label="Toggle menu">

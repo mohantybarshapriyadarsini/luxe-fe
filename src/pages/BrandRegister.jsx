@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { registerBrand } from '../services/api';
 import './AuthPages.css';
 
@@ -9,7 +10,8 @@ const PAN_RE   = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
 const CATEGORIES = ['Fashion','Jewellery','Accessories','Beauty','Footwear','Watches','Electronics','Other'];
 const EMP_RANGES = ['1–10','11–50','51–200','201–500','500+'];
 
-export default function BrandRegister({ onNavigate }) {
+export default function BrandRegister() {
+  const navigate = useNavigate();
   const [step,    setStep]    = useState(1); // 1=personal, 2=brand info, 3=legal & social
   const [form,    setForm]    = useState({
     // Personal
@@ -70,6 +72,14 @@ export default function BrandRegister({ onNavigate }) {
     if (err) { setError(err); return; }
     setLoading(true);
     try {
+      console.log('🏷️ Registering brand with data:', {
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        designation: form.designation,
+        brandName: form.brandName,
+        annualRevenue: form.annualRevenue,
+      });
       await registerBrand({
         name: form.name, email: form.email, phone: form.phone,
         password: form.password, designation: form.designation,
@@ -94,8 +104,10 @@ export default function BrandRegister({ onNavigate }) {
           twitter:         form.twitter,
         },
       });
+      console.log('✅ Brand registered successfully!');
       setSuccess('Brand registered successfully! You can now sign in using the Brand tab.');
     } catch (err) {
+      console.error('❌ Brand registration error:', err.message);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -109,7 +121,7 @@ export default function BrandRegister({ onNavigate }) {
           <span className="success-icon">✦</span>
           <h2>Brand Registered!</h2>
           <p>{success}</p>
-          <button className="btn btn-gold" onClick={() => onNavigate('login')}>Sign In as Brand</button>
+          <button className="btn btn-gold" onClick={() => navigate('/login')}>Sign In as Brand</button>
         </div>
       </div>
     </div>
@@ -304,7 +316,7 @@ export default function BrandRegister({ onNavigate }) {
         )}
 
         <div className="auth-footer">
-          <p>Already registered?{' '}<button className="auth-link" onClick={() => onNavigate('login')}>Sign in</button></p>
+          <p>Already registered?{' '}<button className="auth-link" onClick={() => navigate('/login')}>Sign in</button></p>
         </div>
       </div>
     </div>

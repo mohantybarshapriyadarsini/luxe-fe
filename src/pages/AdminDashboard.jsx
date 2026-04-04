@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   getAdminDashboard, getAdminOrders, updateOrderStatus,
   handleRefundAdmin, getAdminBuyers, sendTrackingMessage,
@@ -19,7 +20,8 @@ function setAdminToken() {
   window.__luxeAdminMode = true;
 }
 
-export default function AdminDashboard({ onNavigate }) {
+export default function AdminDashboard() {
+  const navigate = useNavigate();
   const adminUser = JSON.parse(localStorage.getItem('luxe_admin_user') || 'null');
 
   const [tab,       setTab]       = useState('dashboard');
@@ -41,7 +43,7 @@ export default function AdminDashboard({ onNavigate }) {
   const [updating,    setUpdating]    = useState(false);
 
   useEffect(() => {
-    if (!adminUser) { onNavigate('login'); return; }
+    if (!adminUser) { navigate('/login'); return; }
     loadData();
   }, [tab]);
 
@@ -142,7 +144,7 @@ export default function AdminDashboard({ onNavigate }) {
   function handleLogout() {
     localStorage.removeItem('luxe_admin_token');
     localStorage.removeItem('luxe_admin_user');
-    onNavigate('login');
+    navigate('/login');
   }
 
   const filteredOrders = orders.filter(o =>

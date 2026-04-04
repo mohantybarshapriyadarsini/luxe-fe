@@ -43,7 +43,47 @@
 .field-group input:focus { border-color: var(--gold); }
 
 /* Payment options */
-.payment-options { display: flex; flex-direction: column; gap: 12px; }
+/* Razorpay enhanced option */
+.razorpay-option { border-color: rgba(212,175,55,0.25); }
+.razorpay-option:hover { border-color: rgba(212,175,55,0.5); }
+.razorpay-option.selected { border-color: var(--gold); background: rgba(212,175,55,0.05); }
+
+.rzp-badge {
+  font-size: 9px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+  background: var(--gold-gradient); color: #0b0b0c;
+  padding: 2px 8px; border-radius: 2px;
+}
+
+.rzp-modes {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.rzp-mode-card {
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  padding: 12px 8px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);
+  text-align: center; transition: border-color 0.2s;
+}
+.rzp-mode-card:hover { border-color: rgba(212,175,55,0.35); }
+.rzp-mode-icon  { font-size: 20px; }
+.rzp-mode-label { font-size: 11px; color: var(--text-h); font-weight: 500; letter-spacing: 0.3px; }
+.rzp-mode-sub   { font-size: 10px; color: var(--text-muted); line-height: 1.4; }
+
+.rzp-secure-row {
+  grid-column: 1 / -1;
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px;
+  background: rgba(39,174,96,0.06); border: 1px solid rgba(39,174,96,0.2); border-radius: var(--radius);
+  font-size: 11px; color: #5dba7d; letter-spacing: 0.3px;
+}
+
+@media (max-width: 480px) {
+  .rzp-modes { grid-template-columns: repeat(2, 1fr); }
+}
+
 .payment-option {
   border: 1px solid var(--border); border-radius: var(--radius);
   padding: 18px; cursor: pointer; transition: all 0.3s ease;

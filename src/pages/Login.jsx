@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { loginBrand, loginAdmin } from '../services/api';
 import './AuthPages.css';
 
-export default function Login({ onNavigate }) {
+export default function Login() {
+  const navigate = useNavigate();
   const { login } = useAuth();
   const [tab,        setTab]        = useState('buyer');
   const [form,       setForm]       = useState({ email: '', password: '' });
@@ -25,13 +27,13 @@ export default function Login({ onNavigate }) {
       if (tab === 'buyer') {
         const result = await login(form.email, form.password);
         if (!result.ok) { setError(result.error); return; }
-        onNavigate('home');
+        navigate('/');
 
       } else if (tab === 'brand') {
         const data = await loginBrand({ email: form.email, password: form.password });
         localStorage.setItem('luxe_brand_token', data.token);
         localStorage.setItem('luxe_brand_user', JSON.stringify(data));
-        onNavigate('brand-dashboard');
+        navigate('/brand-dashboard');  // Assuming there's a route for this
 
       } else if (tab === 'admin') {
         // Step 1 — send credentials, get OTP
@@ -58,7 +60,7 @@ export default function Login({ onNavigate }) {
       const data = await loginAdmin({ email: form.email, password: form.password, otp });
       localStorage.setItem('luxe_admin_token', data.token);
       localStorage.setItem('luxe_admin_user', JSON.stringify(data));
-      onNavigate('admin');
+      navigate('/admin');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -159,17 +161,17 @@ export default function Login({ onNavigate }) {
         {tab === 'buyer' && (
           <div className="auth-footer">
             <p>Don't have an account?{' '}
-              <button className="auth-link" onClick={() => onNavigate('signup')}>Create one</button>
+              <button className="auth-link" onClick={() => navigate('/signup')}>Create one</button>
             </p>
             <p style={{ marginTop: '8px' }}>Are you a brand?{' '}
-              <button className="auth-link" onClick={() => onNavigate('brand-register')}>Register your brand</button>
+              <button className="auth-link" onClick={() => navigate('/brand-register')}>Register your brand</button>
             </p>
           </div>
         )}
         {tab === 'brand' && (
           <div className="auth-footer">
             <p>New brand?{' '}
-              <button className="auth-link" onClick={() => onNavigate('brand-register')}>Register here</button>
+              <button className="auth-link" onClick={() => navigate('/brand-register')}>Register here</button>
             </p>
           </div>
         )}

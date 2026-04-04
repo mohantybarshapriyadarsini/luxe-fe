@@ -1,4 +1,5 @@
 /* BrandDashboard.jsx — Protected page for approved brand users */
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './BrandDashboard.css';
 
@@ -13,7 +14,8 @@ function StatCard({ label, value, sub }) {
   );
 }
 
-export default function BrandDashboard({ onNavigate }) {
+export default function BrandDashboard() {
+  const navigate = useNavigate();
   const { user, logout } = useAuth();
 
   /* Guard — should not be reachable by non-brands, but double-check */
@@ -21,14 +23,14 @@ export default function BrandDashboard({ onNavigate }) {
     return (
       <div className="dash-guard">
         <p>Access denied. This page is for verified brands only.</p>
-        <button className="btn btn-outline" onClick={() => onNavigate('home')}>Go Home</button>
+        <button className="btn btn-outline" onClick={() => navigate('/')}>Go Home</button>
       </div>
     );
   }
 
   function handleLogout() {
     logout();
-    onNavigate('home');
+    navigate('/');
   }
 
   return (
@@ -94,7 +96,7 @@ export default function BrandDashboard({ onNavigate }) {
           <div className="dash-card">
             <h3>Quick Actions</h3>
             <div className="dash-actions-list">
-              <button className="dash-action-btn" onClick={() => onNavigate('products')}>
+              <button className="dash-action-btn" onClick={() => navigate('/products')}>
                 <span className="dash-action-icon">◈</span>
                 <div>
                   <p>View Marketplace</p>

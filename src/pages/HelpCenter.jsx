@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './HelpCenter.css';
 
 const FAQS = [
@@ -12,7 +13,8 @@ const FAQS = [
   { q: 'How do I track my order?', a: 'Once your order ships, you will receive a tracking number via email. You can also view order status in My Orders section of your account.' },
 ];
 
-export default function HelpCenter({ onNavigate }) {
+export default function HelpCenter() {
+  const navigate = useNavigate();
   const [openFaq, setOpenFaq] = useState(null);
   const [form, setForm]       = useState({ name: '', email: '', subject: '', message: '' });
   const [sent, setSent]       = useState(false);
@@ -36,7 +38,7 @@ export default function HelpCenter({ onNavigate }) {
         {/* Quick links */}
         <div className="help-quick-links">
           {[['📦','Track Order','orders'],['↩','Returns','help'],['🔐','Authentication','help'],['📞','Contact Us','help']].map(([icon, label, pg]) => (
-            <button key={label} className="quick-link-card" onClick={() => onNavigate(pg)}>
+            <button key={label} className="quick-link-card" onClick={() => navigate('/' + (pg === 'orders' ? 'orders' : 'help'))}>
               <span className="ql-icon">{icon}</span>
               <span className="ql-label">{label}</span>
             </button>

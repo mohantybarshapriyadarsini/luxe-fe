@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getMyOrders, requestRefund } from '../services/api';
 import { priceINR } from '../utils/currency';
 import './Orders.css';
@@ -18,7 +19,8 @@ const REFUND_COLORS = {
   rejected:  '#e05555',
 };
 
-export default function Orders({ onNavigate }) {
+export default function Orders() {
+  const navigate = useNavigate();
   const [orders,       setOrders]       = useState([]);
   const [loading,      setLoading]      = useState(true);
   const [refundModal,  setRefundModal]  = useState(null); // orderId
@@ -75,7 +77,7 @@ export default function Orders({ onNavigate }) {
         {orders.length === 0 ? (
           <div className="orders-empty">
             <p>You haven't placed any orders yet.</p>
-            <button className="btn btn-gold" onClick={() => onNavigate('products')}>Start Shopping</button>
+            <button className="btn btn-gold" onClick={() => navigate('/products')}>Start Shopping</button>
           </div>
         ) : (
           <div className="orders-list">

@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { updateProfile, addAddress, deleteAddress } from '../services/api';
 import './Profile.css';
 
-export default function Profile({ onNavigate }) {
+export default function Profile() {
+  const navigate = useNavigate();
   const { user, refreshUser } = useAuth();
   const [tab, setTab]           = useState('info');
   const [form, setForm]         = useState({ name: '', phone: '' });
@@ -61,7 +63,7 @@ export default function Profile({ onNavigate }) {
             <nav className="profile-nav">
               {[['info','Personal Info'],['password','Password'],['addresses','Addresses'],['orders','My Orders']].map(([t, label]) => (
                 <button key={t} className={`profile-nav-btn ${tab === t ? 'active' : ''}`}
-                  onClick={() => { if (t === 'orders') { onNavigate('orders'); return; } setTab(t); setMsg(''); }}>
+                  onClick={() => { if (t === 'orders') { navigate('/orders'); return; } setTab(t); setMsg(''); }}>
                   {label}
                 </button>
               ))}

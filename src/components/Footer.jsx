@@ -1,6 +1,6 @@
 import './Footer.css';
 
-export default function Footer({ onNavigate }) {
+export default function Footer({ navigate }) {
   return (
     <footer className="footer">
       <div className="container footer-inner">
@@ -12,8 +12,11 @@ export default function Footer({ onNavigate }) {
         <div className="footer-links">
           <h4>Shop</h4>
           <ul>
-            {[['Collections','products',{}],['Best Sellers','best-sellers',{}],['Handbags','products',{category:'Handbags'}],['Watches','products',{category:'Watches'}],['Jewellery','products',{category:'Jewellery'}],['Shoes','products',{category:'Shoes'}]].map(([label, pg, props]) => (
-              <li key={label} onClick={() => onNavigate(pg, props)}>{label}</li>
+            {[['Collections','/products',{}],['Best Sellers','/best-sellers',{}],['Handbags','/products',{category:'Handbags'}],['Watches','/products',{category:'Watches'}],['Jewellery','/products',{category:'Jewellery'}],['Shoes','/products',{category:'Shoes'}]].map(([label, pg, props]) => (
+              <li key={label} onClick={() => {
+                const url = pg + (Object.keys(props).length ? '?' + new URLSearchParams(props).toString() : '');
+                navigate(url);
+              }}>{label}</li>
             ))}
           </ul>
         </div>
@@ -21,8 +24,8 @@ export default function Footer({ onNavigate }) {
         <div className="footer-links">
           <h4>Account</h4>
           <ul>
-            {[['My Profile','profile'],['My Orders','orders'],['Wishlist','wishlist'],['Help Center','help']].map(([label, pg]) => (
-              <li key={label} onClick={() => onNavigate(pg)}>{label}</li>
+            {[['My Profile','/profile'],['My Orders','/orders'],['Wishlist','/wishlist'],['Help Center','/help']].map(([label, pg]) => (
+              <li key={label} onClick={() => navigate(pg)}>{label}</li>
             ))}
           </ul>
         </div>
@@ -30,8 +33,8 @@ export default function Footer({ onNavigate }) {
         <div className="footer-links">
           <h4>Trust</h4>
           <ul>
-            {[['Why Trust Us','trust'],['Authentication Process','trust'],['Customer Reviews','trust'],['Security & Payments','trust']].map(([label, pg]) => (
-              <li key={label} onClick={() => onNavigate(pg)}>{label}</li>
+            {[['Why Trust Us','/trust'],['Authentication Process','/trust'],['Customer Reviews','/trust'],['Security & Payments','/trust']].map(([label, pg]) => (
+              <li key={label} onClick={() => navigate(pg)}>{label}</li>
             ))}
           </ul>
         </div>
@@ -39,8 +42,8 @@ export default function Footer({ onNavigate }) {
         <div className="footer-links">
           <h4>Support</h4>
           <ul>
-            {[['Authentication Policy','help'],['Returns & Refunds','help'],['Contact Us','help'],['Shipping Info','help']].map(([label, pg]) => (
-              <li key={label} onClick={() => onNavigate(pg)}>{label}</li>
+            {[['Authentication Policy','/help'],['Returns & Refunds','/help'],['Contact Us','/help'],['Shipping Info','/help']].map(([label, pg]) => (
+              <li key={label} onClick={() => navigate(pg)}>{label}</li>
             ))}
           </ul>
         </div>

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Trust.css';
 
 const TESTIMONIALS = [
@@ -72,7 +73,8 @@ function StatCounter({ value, suffix, label }) {
   );
 }
 
-export default function Trust({ onNavigate }) {
+export default function Trust() {
+  const navigate = useNavigate();
   const [activeTestimonial, setActiveTestimonial] = useState(0);
 
   useEffect(() => {
@@ -90,7 +92,7 @@ export default function Trust({ onNavigate }) {
           <div className="divider" />
           <h1 className="trust-hero-title">Built on Trust.<br /><em>Backed by Proof.</em></h1>
           <p className="trust-hero-sub">Every decision we make is designed to give you complete confidence — from the moment you browse to the moment your item arrives.</p>
-          <button className="btn btn-gold" onClick={() => onNavigate('products')}>Shop with Confidence</button>
+          <button className="btn btn-gold" onClick={() => navigate('/products')}>Shop with Confidence</button>
         </div>
       </section>
 
@@ -202,8 +204,8 @@ export default function Trust({ onNavigate }) {
               <h2>100% Money-Back Guarantee</h2>
               <p>If any item you receive fails our authentication standards or is not as described, we will issue a <strong>full refund</strong> — no questions asked. Your trust is non-negotiable.</p>
               <div className="guarantee-actions">
-                <button className="btn btn-gold" onClick={() => onNavigate('products')}>Shop Now</button>
-                <button className="btn btn-outline" onClick={() => onNavigate('help')}>Learn More</button>
+                <button className="btn btn-gold" onClick={() => navigate('/products')}>Shop Now</button>
+                <button className="btn btn-outline" onClick={() => navigate('/help')}>Learn More</button>
               </div>
             </div>
           </div>

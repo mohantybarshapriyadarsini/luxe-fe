@@ -1,7 +1,9 @@
 import ProductCard from '../components/ProductCard';
+import { useNavigate } from 'react-router-dom';
 import './Wishlist.css';
 
-export default function Wishlist({ wishlist, onNavigate, onAddToCart, onToggleWishlist }) {
+export default function Wishlist({ wishlist, onAddToCart, onToggleWishlist }) {
+  const navigate = useNavigate();
   return (
     <main className="wishlist-page">
       <div className="container">
@@ -18,13 +20,13 @@ export default function Wishlist({ wishlist, onNavigate, onAddToCart, onToggleWi
               <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
             </svg>
             <p>Your wishlist is empty.</p>
-            <button className="btn btn-gold" onClick={() => onNavigate('products')}>Explore Collections</button>
+            <button className="btn btn-gold" onClick={() => navigate('/products')}>Explore Collections</button>
           </div>
         ) : (
           <div className="wishlist-grid">
             {wishlist.map(product => (
               <ProductCard key={product._id} product={product}
-                onView={p => onNavigate('product', { productId: p._id })}
+                onView={p => navigate('/product/' + p._id)}
                 onAddToCart={onAddToCart}
                 onToggleWishlist={onToggleWishlist}
                 isInWishlist={() => true}

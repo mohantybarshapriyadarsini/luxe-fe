@@ -1,10 +1,11 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { createOrder, createRazorpayOrder, verifyRazorpayPayment } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { priceINR, toINR } from '../utils/currency';
 import './Cart.css';
 
-const RAZORPAY_KEY_ID = 'rzp_test_SXij1zXDGrKPrt'; // only key ID in frontend, secret stays in backend
+const RAZORPAY_KEY_ID = 'rzp_test_SZ4CKCwHmI8Aow'; // only key ID in frontend, secret stays in backend
 
 function loadRazorpayScript() {
   return new Promise(resolve => {
@@ -18,17 +19,25 @@ function loadRazorpayScript() {
 }
 
 const PAYMENT_METHODS = [
-  { id: 'razorpay', label: 'Pay Now (Razorpay)', icon: '💳', desc: 'Pay securely via UPI, Cards, Net Banking, Wallets.' },
-  { id: 'cod',  label: 'Cash on Delivery',        icon: '💵', desc: 'Pay in cash when your order arrives at your doorstep.' },
-  { id: 'upi',  label: 'UPI Transfer',             icon: '📱', desc: 'Pay via UPI and enter your transaction reference number.', info: 'UPI ID: luxe@ybl' },
-  { id: 'bank', label: 'Bank Transfer (NEFT/IMPS)',icon: '🏦', desc: 'Transfer to our bank account and enter the UTR number.', info: 'Bank: HDFC Bank\nAccount Name: LUXE Pvt Ltd\nAccount No: 50100123456789\nIFSC: HDFC0001234\nBranch: Mumbai' },
+  { id: 'razorpay', label: 'Pay Online', icon: '💳', desc: 'UPI · Cards · Net Banking · Wallets', badge: 'RECOMMENDED' },
+  { id: 'cod',  label: 'Cash on Delivery', icon: '💵', desc: 'Pay in cash when your order arrives.' },
+  { id: 'upi',  label: 'UPI Transfer',     icon: '📱', desc: 'Pay via UPI and enter your transaction ID.', info: 'UPI ID: luxe@ybl' },
+  { id: 'bank', label: 'Bank Transfer',    icon: '🏦', desc: 'NEFT/IMPS transfer and enter UTR number.', info: 'Bank: HDFC Bank\nAccount Name: LUXE Pvt Ltd\nAccount No: 50100123456789\nIFSC: HDFC0001234\nBranch: Mumbai' },
 ];
 
-export default function Cart({ cart, onNavigate, onRemove, onUpdateQty, onClearCart }) {
+const RAZORPAY_MODES = [
+  { icon: '📱', label: 'UPI',          sub: 'GPay, PhonePe, Paytm & more' },
+  { icon: '💳', label: 'Credit/Debit', sub: 'Visa, Mastercard, RuPay' },
+  { icon: '🏦', label: 'Net Banking',  sub: 'All major banks supported' },
+  { icon: '👛', label: 'Wallets',      sub: 'Paytm, Amazon Pay & more' },
+];
+
+export default function Cart({ cart, onRemove, onUpdateQty, onClearCart }) {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [step,          setStep]          = useState('cart');
   const [address,       setAddress]       = useState({ fullName: '', phone: '', street: '', city: '', state: '', zipCode: '', country: '' });
-  const [paymentMethod, setPaymentMethod] = useState('cod');
+  const [paymentMethod, setPaymentMethod] = useState('razorpay');
   const [paymentRef,    setPaymentRef]    = useState('');
   const [placing,       setPlacing]       = useState(false);
   const [orderDone,     setOrderDone]     = useState(null);
@@ -171,8 +180,8 @@ export default function Cart({ cart, onNavigate, onRemove, onUpdateQty, onClearC
           )}
 
           <div className="success-actions">
-            <button className="btn btn-gold"    onClick={() => onNavigate('orders')}>View My Orders</button>
-            <button className="btn btn-outline" onClick={() => onNavigate('products')}>Continue Shopping</button>
+            <button className="btn btn-gold"    onClick={() => navigate('/orders')}>View My Orders</button>
+            <button className="btn btn-outline" onClick={() => navigate('/products')}>Continue Shopping</button>
           </div>
         </div>
       </div>
@@ -191,7 +200,7 @@ export default function Cart({ cart, onNavigate, onRemove, onUpdateQty, onClearC
         {cart.length === 0 ? (
           <div className="cart-empty">
             <p>Your cart is empty.</p>
-            <button className="btn btn-gold" onClick={() => onNavigate('products')}>Explore Collections</button>
+            <button className="btn btn-gold" onClick={() => navigate('/products')}>Explore Collections</button>
           </div>
 
         ) : step === 'cart' ? (
@@ -226,11 +235,11 @@ export default function Cart({ cart, onNavigate, onRemove, onUpdateQty, onClearC
               <div className="summary-row summary-total"><span>Total</span><span>{priceINR(subtotal)}</span></div>
               <div className="summary-auth-note">✦ All items are certified authentic and insured during shipping.</div>
               <button className="btn btn-gold" style={{ width: '100%', justifyContent: 'center' }}
-                onClick={() => { if (!user) { onNavigate('login'); return; } setStep('checkout'); }}>
+                onClick={() => { if (!user) { navigate('/login'); return; } setStep('checkout'); }}>
                 Proceed to Checkout
               </button>
               <button className="btn btn-outline" style={{ width: '100%', justifyContent: 'center', marginTop: '12px' }}
-                onClick={() => onNavigate('products')}>
+                onClick={() => navigate('/products')}>
                 Continue Shopping
               </button>
             </div>
@@ -266,17 +275,37 @@ export default function Cart({ cart, onNavigate, onRemove, onUpdateQty, onClearC
                   {PAYMENT_METHODS.map(method => (
                     <div
                       key={method.id}
-                      className={`payment-option ${paymentMethod === method.id ? 'selected' : ''}`}
+                      className={`payment-option ${paymentMethod === method.id ? 'selected' : ''} ${method.id === 'razorpay' ? 'razorpay-option' : ''}`}
                       onClick={() => { setPaymentMethod(method.id); setPaymentRef(''); setError(''); }}
                     >
                       <div className="payment-option-header">
                         <span className="payment-icon">{method.icon}</span>
-                        <div>
-                          <p className="payment-label">{method.label}</p>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <p className="payment-label">{method.label}</p>
+                            {method.badge && <span className="rzp-badge">{method.badge}</span>}
+                          </div>
                           <p className="payment-desc">{method.desc}</p>
                         </div>
                         <div className={`payment-radio ${paymentMethod === method.id ? 'active' : ''}`} />
                       </div>
+
+                      {/* Razorpay modes grid — shown when selected */}
+                      {method.id === 'razorpay' && paymentMethod === 'razorpay' && (
+                        <div className="rzp-modes">
+                          {RAZORPAY_MODES.map(m => (
+                            <div key={m.label} className="rzp-mode-card">
+                              <span className="rzp-mode-icon">{m.icon}</span>
+                              <span className="rzp-mode-label">{m.label}</span>
+                              <span className="rzp-mode-sub">{m.sub}</span>
+                            </div>
+                          ))}
+                          <div className="rzp-secure-row">
+                            <span>🔒</span>
+                            <span>256-bit SSL encrypted · Secured by Razorpay</span>
+                          </div>
+                        </div>
+                      )}
 
                       {/* Bank / UPI details shown when selected */}
                       {paymentMethod === method.id && method.info && (
@@ -288,7 +317,7 @@ export default function Cart({ cart, onNavigate, onRemove, onUpdateQty, onClearC
                         </div>
                       )}
 
-                      {/* Reference input for UPI / Bank only — not for Razorpay or COD */}
+                      {/* Reference input for UPI / Bank only */}
                       {paymentMethod === method.id && method.id !== 'cod' && method.id !== 'razorpay' && (
                         <div className="field-group" style={{ marginTop: '12px' }}>
                           <label>{method.id === 'upi' ? 'UPI Transaction ID' : 'Bank UTR / Reference Number'}</label>
@@ -308,7 +337,12 @@ export default function Cart({ cart, onNavigate, onRemove, onUpdateQty, onClearC
 
               <div className="checkout-actions">
                 <button className="btn btn-gold" onClick={handlePlaceOrder} disabled={placing}>
-                  {placing ? 'Placing Order...' : `Place Order — ${priceINR(subtotal)}`}
+                  {placing
+                    ? (paymentMethod === 'razorpay' ? 'Opening Razorpay...' : 'Placing Order...')
+                    : paymentMethod === 'razorpay'
+                      ? `💳 Pay Now — ${priceINR(subtotal)}`
+                      : `Place Order — ${priceINR(subtotal)}`
+                  }
                 </button>
                 <button className="btn btn-outline" onClick={() => setStep('cart')}>Back to Cart</button>
               </div>

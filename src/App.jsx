@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -17,17 +18,28 @@ import AdminDashboard from './pages/AdminDashboard';
 import BrandRegister from './pages/BrandRegister';
 import BestSellers from './pages/BestSellers';
 import Toast from './components/Toast';
+import Chatbot from './components/Chatbot';
 import './index.css';
+
+function ProtectedRoute({ children }) {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  if (!user) {
+    navigate('/login');
+    return null;
+  }
+  return children;
+}
 
 function AppInner() {
   const { user, loading } = useAuth();
-  const [page,      setPage]      = useState('home');
-  const [pageProps, setPageProps] = useState({});
-  const [cart,      setCart]      = useState(() => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [cart, setCart] = useState(() => {
     try { return JSON.parse(localStorage.getItem('luxe_cart')) || []; } catch { return []; }
   });
-  const [wishlist,  setWishlist]  = useState([]);
-  const [toasts,     setToasts]    = useState([]);
+  const [wishlist, setWishlist] = useState([]);
+  const [toasts, setToasts] = useState([]);
 
   function showToast({ type, icon, title, sub }) {
     const id = Date.now();
@@ -42,14 +54,6 @@ function AppInner() {
   useEffect(() => {
     localStorage.setItem('luxe_cart', JSON.stringify(cart));
   }, [cart]);
-
-  function navigate(target, props = {}) {
-    const protectedPages = ['wishlist', 'profile', 'orders'];
-    if (protectedPages.includes(target) && !user) {
-      setPage('login'); setPageProps({}); window.scrollTo({ top: 0, behavior: 'smooth' }); return;
-    }
-    setPage(target); setPageProps(props); window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
 
   function addToCart(product) {
     const existing = cart.find(i => i._id === product._id);
@@ -87,34 +91,30 @@ function AppInner() {
 
   if (loading) return null;
 
-  function renderPage() {
-    switch (page) {
-      case 'login':    return <Login onNavigate={navigate} />;
-      case 'signup':   return <Signup onNavigate={navigate} />;
-      case 'products': return <Products onNavigate={navigate} onAddToCart={addToCart} onToggleWishlist={toggleWishlist} isInWishlist={isInWishlist} initialBrand={pageProps.brand} initialCategory={pageProps.category} />;
-      case 'product':  return <ProductDetail productId={pageProps.productId} onNavigate={navigate} onAddToCart={addToCart} onToggleWishlist={toggleWishlist} isInWishlist={isInWishlist} />;
-      case 'cart':     return <Cart cart={cart} onNavigate={navigate} onRemove={removeFromCart} onUpdateQty={updateQty} onClearCart={clearCart} />;
-      case 'wishlist': return <Wishlist wishlist={wishlist} onNavigate={navigate} onAddToCart={addToCart} onToggleWishlist={toggleWishlist} />;
-      case 'profile':  return <Profile onNavigate={navigate} />;
-      case 'orders':   return <Orders onNavigate={navigate} />;
-      case 'help':           return <HelpCenter onNavigate={navigate} />;
-      case 'trust':           return <Trust onNavigate={navigate} />;
-      case 'best-sellers':    return <BestSellers onNavigate={navigate} onAddToCart={addToCart} onToggleWishlist={toggleWishlist} isInWishlist={isInWishlist} />;
-      case 'admin':           return <AdminDashboard onNavigate={navigate} />;
-      case 'brand-register':  return <BrandRegister onNavigate={navigate} />;
-      case 'home':
-      default:         return <Home onNavigate={navigate} onAddToCart={addToCart} onToggleWishlist={toggleWishlist} isInWishlist={isInWishlist} />;
-    }
-  }
-
-  const hideFooter = ['login', 'signup', 'admin'].includes(page);
+  const hideFooter = ['/login', '/signup', '/admin'].includes(location.pathname);
 
   return (
     <>
-      {page !== 'admin' && <Navbar cartCount={cartCount} wishlistCount={wishlist.length} onNavigate={navigate} />}
-      {renderPage()}
-      {!hideFooter && <Footer onNavigate={navigate} />}
+      {location.pathname !== '/admin' && <Navbar cartCount={cartCount} wishlistCount={wishlist.length} navigate={navigate} />}
+      <Routes>
+        <Route path="/" element={<Home onAddToCart={addToCart} onToggleWishlist={toggleWishlist} isInWishlist={isInWishlist} />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/products" element={<Products onAddToCart={addToCart} onToggleWishlist={toggleWishlist} isInWishlist={isInWishlist} />} />
+        <Route path="/product/:id" element={<ProductDetail onAddToCart={addToCart} onToggleWishlist={toggleWishlist} isInWishlist={isInWishlist} />} />
+        <Route path="/cart" element={<Cart cart={cart} onRemove={removeFromCart} onUpdateQty={updateQty} onClearCart={clearCart} />} />
+        <Route path="/wishlist" element={<ProtectedRoute><Wishlist wishlist={wishlist} onAddToCart={addToCart} onToggleWishlist={toggleWishlist} /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
+        <Route path="/help" element={<HelpCenter />} />
+        <Route path="/trust" element={<Trust />} />
+        <Route path="/best-sellers" element={<BestSellers onAddToCart={addToCart} onToggleWishlist={toggleWishlist} isInWishlist={isInWishlist} />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/brand-register" element={<BrandRegister />} />
+      </Routes>
+      {!hideFooter && <Footer navigate={navigate} />}
       <Toast toasts={toasts} onRemove={removeToast} />
+      <Chatbot />
     </>
   );
 }

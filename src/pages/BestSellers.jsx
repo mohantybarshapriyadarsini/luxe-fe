@@ -87,7 +87,7 @@ function StarRating({ rating }) {
   );
 }
 
-function BestSellerCard({ data, product, onNavigate, onAddToCart, onToggleWishlist, isInWishlist, rank }) {
+function BestSellerCard({ data, product, navigate, onAddToCart, onToggleWishlist, isInWishlist, rank }) {
   const [activeReview, setActiveReview] = useState(0);
   const wished = product ? isInWishlist?.(product._id) : false;
 
@@ -98,7 +98,7 @@ function BestSellerCard({ data, product, onNavigate, onAddToCart, onToggleWishli
 
       <div className="bs-card-inner">
         {/* Product Image — always use data.image, fallback to product.image from DB */}
-        <div className="bs-img-wrap" onClick={() => product && onNavigate('product', { productId: product._id })}>
+        <div className="bs-img-wrap" onClick={() => product && navigate(`/product/${product._id}`)}>
           <img
             src={data.image || (product && product.image)}
             alt={data.name}
@@ -112,7 +112,7 @@ function BestSellerCard({ data, product, onNavigate, onAddToCart, onToggleWishli
         {/* Product Info */}
         <div className="bs-info">
           <p className="bs-brand">{data.brand}</p>
-          <h3 className="bs-name" onClick={() => product && onNavigate('product', { productId: product._id })}>
+          <h3 className="bs-name" onClick={() => product && navigate(`/product/${product._id}`)}>
             {data.name}
           </h3>
 
@@ -173,7 +173,7 @@ function BestSellerCard({ data, product, onNavigate, onAddToCart, onToggleWishli
   );
 }
 
-export default function BestSellers({ onNavigate, onAddToCart, onToggleWishlist, isInWishlist }) {
+export default function BestSellers({ navigate, onAddToCart, onToggleWishlist, isInWishlist }) {
   const [products, setProducts]   = useState([]);
   const [loading,  setLoading]    = useState(true);
   const [activeTab, setActiveTab] = useState('all');
@@ -277,7 +277,7 @@ export default function BestSellers({ onNavigate, onAddToCart, onToggleWishlist,
                 rank={i + 1}
                 data={data}
                 product={matchProduct(data)}
-                onNavigate={onNavigate}
+                navigate={navigate}
                 onAddToCart={onAddToCart}
                 onToggleWishlist={onToggleWishlist}
                 isInWishlist={isInWishlist}
@@ -289,7 +289,7 @@ export default function BestSellers({ onNavigate, onAddToCart, onToggleWishlist,
         {/* CTA */}
         <div className="bs-cta">
           <p>Explore our full collection of authenticated luxury items</p>
-          <button className="btn btn-gold" onClick={() => onNavigate('products')}>
+          <button className="btn btn-gold" onClick={() => navigate('/products')}>
             View All Collections
           </button>
         </div>

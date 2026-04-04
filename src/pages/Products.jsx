@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { getProducts } from '../services/api';
 import { priceINR } from '../utils/currency';
 import ProductCard from '../components/ProductCard';
@@ -21,12 +22,14 @@ const PRICE_PRESETS = [
   { label: 'Above ₹15L',         min: '18000', max: ''      },
 ];
 
-export default function Products({ onNavigate, onAddToCart, onToggleWishlist, isInWishlist, initialBrand, initialCategory }) {
+export default function Products({ onAddToCart, onToggleWishlist, isInWishlist }) {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [products,       setProducts]       = useState([]);
   const [loading,        setLoading]        = useState(true);
   const [fetchError,     setFetchError]     = useState('');
-  const [activeBrand,    setActiveBrand]    = useState(initialBrand || 'All');
-  const [activeCategory, setActiveCategory] = useState(initialCategory || 'All');
+  const [activeBrand,    setActiveBrand]    = useState(searchParams.get('brand') || 'All');
+  const [activeCategory, setActiveCategory] = useState(searchParams.get('category') || 'All');
   const [sort,           setSort]           = useState('default');
   const [minPrice,       setMinPrice]       = useState('');
   const [maxPrice,       setMaxPrice]       = useState('');
@@ -233,14 +236,45 @@ export default function Products({ onNavigate, onAddToCart, onToggleWishlist, is
                 {[...Array(8)].map((_, i) => <div key={i} className="skeleton-card-page" />)}
               </div>
             ) : fetchError ? (
-              <div className="empty-state">
-                <p style={{ color: '#e05555', fontSize: '15px' }}>⚠️ Products could not be loaded</p>
-                <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '8px', lineHeight: '1.8' }}>
-                  {fetchError.includes('Cannot connect')
-                    ? 'Backend server is not running. Start it with: cd Backend && node server.js'
-                    : fetchError}
+              <div className="empty-state" style={{ padding: '60px 40px', textAlign: 'center' }}>
+                <p style={{ color: '#e05555', fontSize: '16px', fontWeight: '600', marginBottom: '16px' }}>
+                  ⚠️ Products could not be loaded
                 </p>
-                <button className="btn btn-gold" onClick={fetchProducts} style={{ marginTop: '20px' }}>Retry</button>
+                <div style={{ 
+                  background: 'rgba(224, 85, 85, 0.08)', 
+                  border: '1px solid rgba(224, 85, 85, 0.3)',
+                  borderRadius: '8px',
+                  padding: '16px',
+                  marginBottom: '24px',
+                  textAlign: 'left',
+                  fontSize: '12px',
+                  lineHeight: '1.8',
+                  color: 'var(--text-muted)',
+                  fontFamily: 'monospace',
+                  maxWidth: '500px',
+                  margin: '0 auto 24px'
+                }}>
+                  <p style={{ marginBottom: '8px' }}>
+                    <strong>Error:</strong> {fetchError.includes('Cannot connect') 
+                      ? 'Cannot reach backend server' 
+                      : fetchError}
+                  </p>
+                  {fetchError.includes('Cannot connect') && (
+                    <>
+                      <p style={{ marginBottom: '8px' }}>
+                        <strong>Backend Status:</strong> NOT RUNNING
+                      </p>
+                      <p>
+                        <strong>Fix:</strong> Start backend in terminal:
+                        <br/>cd Backend && node server.js
+                      </p>
+                    </>
+                  )}
+                </div>
+                <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                  <button className="btn btn-gold" onClick={fetchProducts}>↻ Retry</button>
+                  <button className="btn btn-outline" onClick={() => window.location.reload()}>🔄 Reload Page</button>
+                </div>
               </div>
             ) : products.length > 0 ? (
               <div className="products-grid-page">
@@ -248,7 +282,7 @@ export default function Products({ onNavigate, onAddToCart, onToggleWishlist, is
                   <ProductCard
                     key={product._id}
                     product={product}
-                    onView={p => onNavigate('product', { productId: p._id })}
+                    onView={p => navigate('/product/' + p._id)}
                     onAddToCart={onAddToCart}
                     onToggleWishlist={onToggleWishlist}
                     isInWishlist={isInWishlist}
